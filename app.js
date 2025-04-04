@@ -4,6 +4,12 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+// Load environment variables from .env file in the project root directory
+require("dotenv").config(); 
+
+// Import database connection
+require("./utils/dbConnect");
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
