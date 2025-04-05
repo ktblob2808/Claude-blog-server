@@ -1,4 +1,5 @@
 const svgCaptcha = require('svg-captcha');
+const { ValidationError } = require('../errors/index');
 
 class CaptchaService {
   generateCaptcha() {
@@ -15,6 +16,12 @@ class CaptchaService {
       svg: captcha.data // SVG image
     };
   }
+
+  validateCaptcha(inputCaptcha, sessionCaptcha){
+    if (inputCaptcha !== sessionCaptcha) {
+        throw new ValidationError('Invalid captcha');
+    }
+};
 }
 
 module.exports = new CaptchaService();
