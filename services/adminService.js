@@ -22,9 +22,9 @@ class AdminService {
       }
 
       // Return admin data without password
-      const { loginPwd: _, ...adminData } = admin.get({ plain: true });
+      const adminData  = admin.get({ plain: true });
       return {
-        success: true,
+        //success: true,
         data: adminData
       };
     } catch (error) {
