@@ -8,7 +8,7 @@ const fs = require('fs');
  * @param {number} code - Response code (0 means success)
  * @returns {Object} - Formatted response
  */
-exports.formatResponse = (data, msg = "success", code = 0) => {
+exports.formatResponse = (data, msg = "", code = 0) => {
   return {
     code,
     msg,
