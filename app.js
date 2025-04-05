@@ -22,6 +22,7 @@ const captchaRouter = require('./routes/captcha');
 const bannerRoutes = require('./routes/banner'); // Import the new banner routes
 const uploadRouter = require('./routes/upload');
 const blogTypeRouter = require('./routes/blogType');
+const blogRouter = require('./routes/blog'); // Add this line to import blog routes
 
 // Import banner seed function
 const { seedBannerData } = require('./models/bannerModel');
@@ -81,6 +82,7 @@ app.use('/res', captchaRouter);
 app.use('/api/banner', bannerRoutes); // Add the banner routes
 app.use('/api', uploadRouter);
 app.use('/api/blogtype', blogTypeRouter);
+app.use('/api/blog', blogRouter); // Add this line to register blog routes
 
 
 // Sync database when application starts
