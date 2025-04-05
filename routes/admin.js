@@ -21,10 +21,10 @@ router.post('/login', async (req, res) => {
     
     // Add token to headers
     if (result.token) {
-      res.header('Authorization', `Bearer ${result.token}`);
+      res.setHeader('authentication', result.token);
     }
     
-    res.json(formatResponse(result.data, "login success"));
+    res.json(formatResponse(result.data, "Login success"));
   } catch (error) {
     // If the error has a response method (our custom errors), use it
     if (typeof error.response === 'function') {
@@ -58,7 +58,7 @@ router.get('/whoami', async (req, res) => {
       id: decoded.id,
       loginId: decoded.loginId,
       name: decoded.name
-    }, "Authentication successful"));
+    }, "Token valid"));
   } catch (error) {
     if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
       return res.status(401).json(formatResponse(null, "Invalid or expired token", 401));

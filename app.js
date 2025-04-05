@@ -42,7 +42,7 @@ app.use(session({
 // JWT Token Validation Middleware
 const protectRoute = (req, res, next) => {
   // Skip token verification for login and whoami routes
-  if (req.path === '/api/admin/login' || req.path === '/api/admin/whoami') {
+  if (req.path === '/login') {
     return next();
   }
 

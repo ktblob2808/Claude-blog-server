@@ -24,7 +24,7 @@ class AdminService {
       }
 
       // Return admin data without password
-      const adminData = admin.get({ plain: true });
+      const { loginPwd: _, ...adminData } = admin.get({ plain: true });
       
       // Generate JWT token
       const expiresIn = remember ? `${remember}d` : '1d';
