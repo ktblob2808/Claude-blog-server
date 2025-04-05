@@ -53,4 +53,40 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+// Get a single blog by id
+router.get("/:id", async (req, res) => {
+  try {
+    // Extract token if available to determine if admin or client
+    const token = req.headers.authorization ? req.headers.authorization.split(" ")[1] : null;
+    const blogId = req.params.id;
+    const result = await blogService.getBlogById(blogId, token);
+    res.send(formatResponse(true, result));
+  } catch (err) {
+    res.send(formatResponse(false, null, err.message));
+  }
+});
+
+// Edit a blog post
+router.put("/:id", async (req, res) => {
+  try {
+    const blogId = req.params.id;
+    const blogData = req.body;
+    const result = await blogService.editBlog(blogId, blogData);
+    res.send(formatResponse(true, result));
+  } catch (err) {
+    res.send(formatResponse(false, null, err.message));
+  }
+});
+
+// Delete a blog post
+router.delete("/:id", async (req, res) => {
+  try {
+    const blogId = req.params.id;
+    const result = await blogService.deleteBlog(blogId);
+    res.send(formatResponse(true, result));
+  } catch (err) {
+    res.send(formatResponse(false, null, err.message));
+  }
+});
+
 module.exports = router;

@@ -46,14 +46,29 @@ app.use(session({
   cookie: { maxAge: 24 * 60 * 60 * 1000 } // 24 hours
 }));
 
-// JWT Token Validation Middleware
-const protectRoute = (req, res, next) => {
-  // Skip token verification for login, captcha, and GET banner routes
-  if (req.path === '/login' || req.path === '/captcha' || 
-     (req.path === '/banner' && req.method === 'GET')) {
-    return next();
+// Token verification middleware
+app.use((req, res, next) => {
+  // Routes that don't need token verification
+  const publicPaths = [
+    '/api/admin/login',
+    '/api/captcha',
+    // Add the new route for getting a single blog
+    /^\/api\/blog\/\w+$/ // Regex to match '/api/blog/:id'
+  ];
+  
+  // Check if the current path should be excluded from token verification
+  const isPublicPath = publicPaths.some(path => {
+    if (path instanceof RegExp) {
+      return path.test(req.path);
+    }
+    return path === req.path;
+  });
+  
+  if (isPublicPath || req.method === 'OPTIONS') {
+    next();
+    return;
   }
-
+  
   // Check for token in headers
   const token = req.headers.authorization?.split(' ')[1];
   
@@ -69,7 +84,7 @@ const protectRoute = (req, res, next) => {
   } catch (error) {
     return res.status(401).json(formatResponse(null, "Invalid or expired token", 401));
   }
-};
+});
 
 // Apply JWT protection to admin routes
 app.use('/api/admin', protectRoute);

@@ -1,6 +1,8 @@
 const blogDao = require("../dao/blogDao");
 const BlogType = require("../models/blogTypeModel");
 const { ServiceError } = require("../errors/index");
+const jwt = require('jsonwebtoken');
+const blogTypeDao = require('../dao/blogTypeDao');
 
 /**
  * Blog Service
@@ -103,4 +105,88 @@ exports.getBlogs = async function (params) {
     limit,
     categoryId
   });
+};
+
+/**
+ * Get a single blog by ID
+ * @param {number} id - Blog ID
+ * @param {string} token - JWT token
+ * @returns {Promise<Object>} - The blog data
+ * @throws {Error} - If blog is not found
+ */
+exports.getBlogById = async (id, token) => {
+  // Check if token exists to determine if it's admin or client side
+  let isAdmin = false;
+  
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      if (decoded) {
+        isAdmin = true;
+      }
+    } catch (err) {
+      // Invalid token, treat as client side
+      isAdmin = false;
+    }
+  }
+  
+  // Get the blog with associated blog type information
+  const blog = await blogDao.getBlogById(id);
+  
+  if (!blog) {
+    throw new Error('Blog not found');
+  }
+  
+  // Only increase the scan number if it's from client side
+  if (!isAdmin) {
+    await blogDao.increaseScanNumber(id);
+    blog.scanNumber += 1; // Update the returned object as well
+  }
+  
+  // Get blog type information
+  const blogType = await blogTypeDao.getBlogTypeById(blog.blogTypeId);
+  blog.blogType = blogType;
+  
+  return blog;
+};
+
+/**
+ * Edit a blog
+ * @param {number} id - Blog ID
+ * @param {Object} blogData - Blog data to update
+ * @returns {Promise<Object>} - The updated blog
+ * @throws {Error} - If blog is not found
+ */
+exports.editBlog = async (id, blogData) => {
+  // Check if blog exists
+  const blog = await blogDao.getBlogById(id);
+  if (!blog) {
+    throw new Error('Blog not found');
+  }
+  
+  // Update the blog
+  const updatedBlog = await blogDao.updateBlog(id, blogData);
+  return updatedBlog;
+};
+
+/**
+ * Delete a blog
+ * @param {number} id - Blog ID
+ * @returns {Promise<Object>} - The result of the deletion
+ * @throws {Error} - If blog is not found
+ */
+exports.deleteBlog = async (id) => {
+  // Check if blog exists
+  const blog = await blogDao.getBlogById(id);
+  if (!blog) {
+    throw new Error('Blog not found');
+  }
+  
+  // Delete the blog
+  const result = await blogDao.deleteBlog(id);
+  
+  // Reduce article count in blogType table
+  await blogTypeDao.decrementArticleCount(blog.blogTypeId);
+  
+  return result;
 };
