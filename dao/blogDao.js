@@ -67,7 +67,7 @@ exports.getBlogs = async function ({ page = 1, limit = 10, categoryId }) {
       {
         model: BlogType,
         as: "category",
-        attributes: ["name"] // Only fetch the name of the category
+        attributes: ["id", "name"] // Only fetch the name of the category
       }
     ],
     offset: parseInt(offset),
@@ -77,7 +77,7 @@ exports.getBlogs = async function ({ page = 1, limit = 10, categoryId }) {
   
   // Return formatted result with total count and blog rows
   return {
-    total: result.count,
+    count: result.count,
     rows: result.rows.map(row => row.toJSON())
   };
 };

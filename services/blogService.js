@@ -36,13 +36,9 @@ exports.addBlog = async function (newBlog) {
   newBlog.scanNumber = 0;
   newBlog.commentNumber = 0;
   
-  // Set current date in ISO format
-  newBlog.createDate = new Date().toISOString();
   
   // If toc is not provided, set it to empty string
-  if (!newBlog.toc) {
-    newBlog.toc = "";
-  }
+  newBlog.toc = JSON.stringify('[]');
   
   // Validate that categoryId exists in blogType if provided
   if (newBlog.categoryId) {

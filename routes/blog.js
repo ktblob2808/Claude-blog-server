@@ -22,7 +22,7 @@ router.post("/", async (req, res, next) => {
     const result = await blogService.addBlog(blogData);
     
     // Return success response with the created blog
-    res.json(formatResponse(result, "Blog added successfully"));
+    res.json(formatResponse(result, ""));
   } catch (error) {
     // Pass error to error handling middleware
     next(error);
