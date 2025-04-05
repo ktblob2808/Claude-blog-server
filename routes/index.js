@@ -6,4 +6,7 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
+// Add captcha route - excluded from token validation
+router.use('/res', require('./captcha'));
+
 module.exports = router;
