@@ -19,6 +19,10 @@ require("./utils/dbConnect");
 // Import routes
 const adminRoutes = require('./routes/admin');
 const captchaRouter = require('./routes/captcha');
+const bannerRoutes = require('./routes/banner'); // Import the new banner routes
+
+// Import banner seed function
+const { seedBannerData } = require('./models/bannerModel');
 
 var app = express();
 
@@ -41,8 +45,9 @@ app.use(session({
 
 // JWT Token Validation Middleware
 const protectRoute = (req, res, next) => {
-  // Skip token verification for login and whoami routes
-  if (req.path === '/login' || req.path === '/captcha') {
+  // Skip token verification for login, captcha, and GET banner routes
+  if (req.path === '/login' || req.path === '/captcha' || 
+     (req.path === '/banner' && req.method === 'GET')) {
     return next();
   }
 
@@ -66,14 +71,18 @@ const protectRoute = (req, res, next) => {
 // Apply JWT protection to admin routes
 app.use('/api/admin', protectRoute);
 app.use('/res', protectRoute);
+app.use('/api/banner', protectRoute); // Apply JWT protection to banner routes
 
 // Routes
 app.use('/api/admin', adminRoutes);
 app.use('/res', captchaRouter);
+app.use('/api/banner', bannerRoutes); // Add the banner routes
 
 // Sync database when application starts
 syncDatabase().then(() => {
   console.log('Database setup complete');
+  // Seed banner data after database is synced
+  seedBannerData().catch(err => console.error('Error seeding banner data:', err));
 });
 
 // catch 404 and forward to error handler
