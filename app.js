@@ -8,6 +8,7 @@ const session = require('express-session');
 const { syncDatabase } = require('./utils/db');
 const jwt = require('jsonwebtoken');
 const { formatResponse } = require('./utils/tool');
+const { ForbiddenError, ServiceError, UnknownError } = require('./errors/index');
 
 // Load environment variables from .env file in the project root directory
 require("dotenv").config(); 
@@ -16,8 +17,6 @@ require("dotenv").config();
 require("./utils/dbConnect");
 
 // Import routes
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 const adminRoutes = require('./routes/admin');
 
 var app = express();
@@ -67,8 +66,6 @@ const protectRoute = (req, res, next) => {
 app.use('/api/admin', protectRoute);
 
 // Routes
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/api/admin', adminRoutes);
 
 // Sync database when application starts
@@ -85,11 +82,13 @@ app.use(function(req, res, next) {
 app.use(function(err, req, res, next) {
   console.error(err.stack);
   
-  if (typeof err.response === 'function') {
-    return res.status(err.code || 500).json(err.response());
+  if (err.name === 'UnauthorizedError') {
+    res.send(new ForbiddenError("login fail, Or login expired").toResponse());
+  } else if(err instanceof ServiceError){
+    res.send(err.toResponse());
+  } else {
+    res.send(new UnknownError().toResponse());
   }
-  
-  res.status(500).json(formatResponse(null, "Internal server error", 500));
 });
 
 module.exports = app;

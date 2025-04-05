@@ -3,7 +3,9 @@ const router = express.Router();
 const adminService = require('../services/adminService');
 const { formatResponse } = require('../utils/tool');
 const jwt = require('jsonwebtoken');
+const adminDao = require('../dao/adminDao');
 const { ValidationError } = require('../errors');
+const md5 = require('md5');
 
 /**
  * Admin login
@@ -71,5 +73,46 @@ router.get('/whoami', async (req, res) => {
     res.status(500).json(formatResponse(null, error.message || 'Server error', 500));
   }
 });
+
+router.put('/', async (req, res, next) => {
+  try {
+    const { loginId, oldLoginPwd, loginPwd } = req.body;
+    
+    if (!oldLoginPwd || !loginPwd) {
+      throw new ValidationError('Old password and new password are required');
+    }
+    
+    // Find admin account
+    const admin = await adminDao.findAdmin(loginId, oldLoginPwd);
+    
+    
+    if (!admin) {
+      throw new ValidationError('Admin account not found');
+    }
+    
+    // Validate old password
+    if (admin.dataValues.loginPwd !== md5(oldLoginPwd)) {
+      throw new ValidationError('Old password is incorrect');
+    }
+    
+    // Update with new password
+        await adminDao.updateAdminDao({
+            name: req.body.name,
+            loginId: req.body.loginId,
+            loginPwd: req.body.loginPwd
+        })
+    
+
+    res.json(formatResponse({
+      id: admin.id,
+      loginId: admin.loginId,
+      name: admin.name
+    }, ''
+    , 0));
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 module.exports = router;
