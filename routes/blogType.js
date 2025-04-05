@@ -14,7 +14,7 @@ router.post("/", async (req, res, next) => {
     const result = await blogTypeService.addBlogType({ name, order });
     res.json(formatResponse(result, ""));
   } catch (error) {
-    next(error);
+    res.status(500).json(formatResponse(null, error.message, 1));
   }
 });
 
@@ -29,7 +29,7 @@ router.get("/:id", async (req, res, next) => {
     const result = await blogTypeService.getBlogTypeById(id);
     res.json(formatResponse(result));
   } catch (error) {
-    next(error);
+    res.status(500).json(formatResponse(null, error.message, 1));
   }
 });
 
@@ -43,7 +43,7 @@ router.get("/", async (req, res, next) => {
     const result = await blogTypeService.getAllBlogTypes();
     res.json(formatResponse(result));
   } catch (error) {
-    next(error);
+    res.status(500).json(formatResponse(null, error.message, 1));
   }
 });
 
@@ -59,7 +59,7 @@ router.put("/:id", async (req, res, next) => {
     const result = await blogTypeService.updateBlogType(id, updateData);
     res.json(formatResponse(result, ""));
   } catch (error) {
-    next(error);
+    res.status(500).json(formatResponse(null, error.message, 1));
   }
 });
 
@@ -74,7 +74,7 @@ router.delete("/:id", async (req, res, next) => {
     const result = await blogTypeService.deleteBlogType(id);
     res.json(formatResponse(result.articleCount, ""));
   } catch (error) {
-    next(error);
+    res.status(500).json(formatResponse(null, error.message, 1));
   }
 });
 
