@@ -22,6 +22,14 @@ class AdminDao {
       return null;
     }
   }
+
+  async updateAdminDao(newAccountInfo){
+    return await Admin.update(newAccountInfo, {
+        where : {
+            loginId : newAccountInfo.loginId
+        }
+    })
+}
 }
 
 module.exports = new AdminDao();
