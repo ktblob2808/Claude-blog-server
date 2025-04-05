@@ -2,6 +2,7 @@ const blogDao = require("../dao/blogDao");
 const BlogType = require("../models/blogTypeModel");
 const { ServiceError } = require("../errors/index");
 const jwt = require('jsonwebtoken');
+const md5 = require('md5');
 const blogTypeDao = require('../dao/blogTypeDao');
 
 /**
@@ -120,7 +121,7 @@ exports.getBlogById = async (id, token) => {
   
   if (token) {
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, md5(process.env.JWT_SECRET));
       if (decoded) {
         isAdmin = true;
       }
@@ -159,6 +160,8 @@ exports.getBlogById = async (id, token) => {
  */
 exports.editBlog = async (id, blogData) => {
   // Check if blog exists
+
+  blogData.toc = JSON.stringify('[]');
   const blog = await blogDao.getBlogById(id);
   if (!blog) {
     throw new Error('Blog not found');
@@ -186,7 +189,7 @@ exports.deleteBlog = async (id) => {
   const result = await blogDao.deleteBlog(id);
   
   // Reduce article count in blogType table
-  await blogTypeDao.decrementArticleCount(blog.blogTypeId);
+  await blogTypeDao.decrementArticleCount(blog.categoryId);
   
   return result;
 };

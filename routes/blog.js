@@ -25,7 +25,7 @@ router.post("/", async (req, res, next) => {
     res.json(formatResponse(result, ""));
   } catch (error) {
     // Pass error to error handling middleware
-    next(error);
+    res.status(500).json(formatResponse(null, error.message, 1));
   }
 });
 
@@ -49,7 +49,7 @@ router.get("/", async (req, res, next) => {
     res.json(formatResponse(result));
   } catch (error) {
     // Pass error to error handling middleware
-    next(error);
+    res.status(500).json(formatResponse(null, error.message, 1));
   }
 });
 
@@ -60,9 +60,9 @@ router.get("/:id", async (req, res) => {
     const token = req.headers.authorization ? req.headers.authorization.split(" ")[1] : null;
     const blogId = req.params.id;
     const result = await blogService.getBlogById(blogId, token);
-    res.send(formatResponse(true, result));
+    res.send(formatResponse(result, ''));
   } catch (err) {
-    res.send(formatResponse(false, null, err.message));
+    res.status(500).json(formatResponse(null, err.message, 1));
   }
 });
 
@@ -72,9 +72,9 @@ router.put("/:id", async (req, res) => {
     const blogId = req.params.id;
     const blogData = req.body;
     const result = await blogService.editBlog(blogId, blogData);
-    res.send(formatResponse(true, result));
+    res.send(formatResponse(result, ''));
   } catch (err) {
-    res.send(formatResponse(false, null, err.message));
+    res.status(500).json(formatResponse(null, err.message, 1));
   }
 });
 
@@ -83,9 +83,9 @@ router.delete("/:id", async (req, res) => {
   try {
     const blogId = req.params.id;
     const result = await blogService.deleteBlog(blogId);
-    res.send(formatResponse(true, result));
+    res.send(formatResponse(result, ''));
   } catch (err) {
-    res.send(formatResponse(false, null, err.message));
+    res.status(500).json(formatResponse(null, err.message, 1));
   }
 });
 
