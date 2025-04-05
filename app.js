@@ -20,6 +20,7 @@ require("./utils/dbConnect");
 const adminRoutes = require('./routes/admin');
 const captchaRouter = require('./routes/captcha');
 const bannerRoutes = require('./routes/banner'); // Import the new banner routes
+const uploadRouter = require('./routes/upload');
 
 // Import banner seed function
 const { seedBannerData } = require('./models/bannerModel');
@@ -77,6 +78,7 @@ app.use('/api/banner', protectRoute); // Apply JWT protection to banner routes
 app.use('/api/admin', adminRoutes);
 app.use('/res', captchaRouter);
 app.use('/api/banner', bannerRoutes); // Add the banner routes
+app.use('/api', uploadRouter);
 
 // Sync database when application starts
 syncDatabase().then(() => {
@@ -95,11 +97,11 @@ app.use(function(err, req, res, next) {
   console.error(err.stack);
   
   if (err.name === 'UnauthorizedError') {
-    res.send(new ForbiddenError("login fail, Or login expired").toResponse());
+    res.send(new ForbiddenError("login fail, Or login expired").response());
   } else if(err instanceof ServiceError){
-    res.send(err.toResponse());
+    res.send(err.response());
   } else {
-    res.send(new UnknownError().toResponse());
+    res.send(new UnknownError().response());
   }
 });
 
