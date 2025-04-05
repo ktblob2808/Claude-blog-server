@@ -1,5 +1,6 @@
 const sequelize = require('./dbConnect');
 const Admin = require('../models/adminModel');
+const { Banner } = require('../models/bannerModel');
 const md5 = require('md5');
 
 // Import other models here
