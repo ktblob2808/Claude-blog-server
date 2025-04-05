@@ -8,13 +8,11 @@ class ServiceError extends Error {
 
   response() {
     return {
-      success: false,
-      error: {
         code: this.code,
-        message: this.message,
-        type: this.name
-      }
-    };
+        msg: this.message,
+        data: null
+    }
+
   }
 }
 
