@@ -6,15 +6,35 @@ class UploadError extends ServiceError {
   }
 }
 
-class ForbiddenError extends ServiceError {
-  constructor(message = 'Access forbidden', code = 403) {
-    super(message, code);
+class ValidationError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'ValidationError';
+    this.code = 400;
+  }
+
+  response() {
+    return {
+      code: this.code,
+      msg: this.message,
+      data: null
+    };
   }
 }
 
-class ValidationError extends ServiceError {
-  constructor(message = 'Validation error', code = 400) {
-    super(message, code);
+class ForbiddenError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'ForbiddenError';
+    this.code = 403;
+  }
+
+  response() {
+    return {
+      code: this.code,
+      msg: this.message,
+      data: null
+    };
   }
 }
 
@@ -24,9 +44,19 @@ class NotFoundError extends ServiceError {
   }
 }
 
-class UnknownError extends ServiceError {
-  constructor(message = 'Unknown error occurred', code = 500) {
-    super(message, code);
+class UnknownError extends Error {
+  constructor(message, code = 500) {
+    super(message);
+    this.name = 'UnknownError';
+    this.code = code;
+  }
+
+  response() {
+    return {
+      code: this.code,
+      msg: this.message,
+      data: null
+    };
   }
 }
 
