@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const adminDao = require('../dao/adminDao');
 const { ValidationError } = require('../errors');
 const md5 = require('md5');
+const captchaService = require('../services/captchaService');
 
 /**
  * Admin login
@@ -13,7 +14,10 @@ const md5 = require('md5');
  */
 router.post('/login', async (req, res) => {
   try {
-    const { loginId, loginPwd, remember } = req.body;
+    const { loginId, loginPwd, remember, captcha } = req.body;
+
+    //captchaService.validateCaptcha(captcha, req.session.captcha);
+
     const result = await adminService.login(loginId, loginPwd, remember);
     
     // Set session data if you want to keep the user logged in

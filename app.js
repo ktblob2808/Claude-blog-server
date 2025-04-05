@@ -18,6 +18,7 @@ require("./utils/dbConnect");
 
 // Import routes
 const adminRoutes = require('./routes/admin');
+const captchaRouter = require('./routes/captcha');
 
 var app = express();
 
@@ -41,7 +42,7 @@ app.use(session({
 // JWT Token Validation Middleware
 const protectRoute = (req, res, next) => {
   // Skip token verification for login and whoami routes
-  if (req.path === '/login') {
+  if (req.path === '/login' || req.path === '/captcha') {
     return next();
   }
 
@@ -64,9 +65,11 @@ const protectRoute = (req, res, next) => {
 
 // Apply JWT protection to admin routes
 app.use('/api/admin', protectRoute);
+app.use('/res', protectRoute);
 
 // Routes
 app.use('/api/admin', adminRoutes);
+app.use('/res', captchaRouter);
 
 // Sync database when application starts
 syncDatabase().then(() => {
