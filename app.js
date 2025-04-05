@@ -6,6 +6,8 @@ var logger = require('morgan');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const { syncDatabase } = require('./utils/db');
+const jwt = require('jsonwebtoken');
+const { formatResponse } = require('./utils/tool');
 
 // Load environment variables from .env file in the project root directory
 require("dotenv").config(); 
@@ -37,6 +39,33 @@ app.use(session({
   cookie: { maxAge: 24 * 60 * 60 * 1000 } // 24 hours
 }));
 
+// JWT Token Validation Middleware
+const protectRoute = (req, res, next) => {
+  // Skip token verification for login and whoami routes
+  if (req.path === '/login') {
+    return next();
+  }
+
+  // Check for token in headers
+  const token = req.headers.authorization?.split(' ')[1];
+  
+  if (!token) {
+    return res.status(403).json(formatResponse(null, "Access denied. No token provided.", 403));
+  }
+
+  try {
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-jwt-secret-key');
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(401).json(formatResponse(null, "Invalid or expired token", 401));
+  }
+};
+
+// Apply JWT protection to admin routes
+app.use('/api/admin', protectRoute);
+
 // Routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
@@ -60,15 +89,7 @@ app.use(function(err, req, res, next) {
     return res.status(err.code || 500).json(err.response());
   }
   
-  res.status(500).json({
-    success: false,
-    error: {
-      message: 'Internal server error',
-      code: 500
-    }
-  });
+  res.status(500).json(formatResponse(null, "Internal server error", 500));
 });
-
-
 
 module.exports = app;
