@@ -10,7 +10,7 @@ const { formatResponse } = require('../utils/tool');
 router.get('/', async (req, res) => {
   try {
     const banners = await bannerService.getAllBanners();
-    res.json(formatResponse(banners, "Banners retrieved successfully"));
+    res.json(formatResponse(banners, ""));
   } catch (error) {
     // If the error has a response method (our custom errors), use it
     if (typeof error.response === 'function') {
@@ -34,7 +34,7 @@ router.post('/', async (req, res) => {
   try {
     const bannerData = req.body;
     const result = await bannerService.replaceBanners(bannerData);
-    res.json(formatResponse(result, "Banners updated successfully"));
+    res.json(formatResponse(result, ""));
   } catch (error) {
     // If the error has a response method (our custom errors), use it
     if (typeof error.response === 'function') {
