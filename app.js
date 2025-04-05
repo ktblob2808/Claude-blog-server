@@ -5,9 +5,11 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const expressJWT = require("express-jwt");
 const { syncDatabase } = require('./utils/db');
 const jwt = require('jsonwebtoken');
 const { formatResponse } = require('./utils/tool');
+const md5 = require('md5');
 const { ForbiddenError, ServiceError, UnknownError } = require('./errors/index');
 
 // Load environment variables from .env file in the project root directory
@@ -46,37 +48,23 @@ app.use(session({
   cookie: { maxAge: 24 * 60 * 60 * 1000 } // 24 hours
 }));
 
-// JWT Token Validation Middleware
-const protectRoute = (req, res, next) => {
-  // Skip token verification for login, captcha, and GET banner routes
-  if (req.path === '/login' || req.path === '/captcha' || 
-     (req.path === '/banner' && req.method === 'GET')) {
-    return next();
-  }
+app.use(expressJWT({
+  secret : md5(process.env.JWT_SECRET), 
+  algorithms : ['HS256'], 
+}).unless({
+  path : [
+    {"url" : "/api/admin/login", methods : ["POST"]},
+    {"url" : "/api/admin", methods : ["PUT"]},
+    {"url" : "/res/captcha", methods : ["GET"]},
+    {"url" : "/api/banner", methods : ["GET"]},
+    {"url" : "/api/blogtype", methods : ["GET"]},
+    {"url" : "/api/blog", methods : ["GET"]},
+    {"url" : /\/api\/blog\/\d/, methods : ["GET"]}// Exclude from token checking
 
-  // Check for token in headers
-  const token = req.headers.authorization?.split(' ')[1];
-  
-  if (!token) {
-    return res.status(403).json(formatResponse(null, "Access denied. No token provided.", 403));
-  }
+  ]
+}))
 
-  try {
-    // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-jwt-secret-key');
-    req.user = decoded;
-    next();
-  } catch (error) {
-    return res.status(401).json(formatResponse(null, "Invalid or expired token", 401));
-  }
-};
 
-// Apply JWT protection to admin routes
-app.use('/api/admin', protectRoute);
-app.use('/res', protectRoute);
-app.use('/api/banner', protectRoute); // Apply JWT protection to banner routes
-
-// Routes
 app.use('/api/admin', adminRoutes);
 app.use('/res', captchaRouter);
 app.use('/api/banner', bannerRoutes); // Add the banner routes

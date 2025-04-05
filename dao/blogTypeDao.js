@@ -44,3 +44,12 @@ exports.deleteBlogType = async function (id) {
   }
   return null;
 };
+exports.decrementArticleCount = async (id) => {
+  const blogType = await BlogType.findByPk(id);
+  if (blogType) {
+    blogType.articleCount = Math.max(0, blogType.articleCount - 1); // Ensure articleCount doesn't go below 0
+    await blogType.save();
+    return blogType.toJSON();
+  }
+  return null;
+};

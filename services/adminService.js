@@ -1,7 +1,7 @@
 const adminDao = require('../dao/adminDao');
 const { ValidationError, UnknownError } = require('../errors');
 const jwt = require('jsonwebtoken');
-
+const md5 = require('md5');
 class AdminService {
   /**
    * Admin login service
@@ -36,7 +36,7 @@ class AdminService {
       
       const token = jwt.sign(
         tokenPayload,
-        process.env.JWT_SECRET || 'your-jwt-secret-key',
+        md5(process.env.JWT_SECRET),
         { expiresIn }
       );
 

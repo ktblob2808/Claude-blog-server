@@ -81,3 +81,40 @@ exports.getBlogs = async function ({ page = 1, limit = 10, categoryId }) {
     rows: result.rows.map(row => row.toJSON())
   };
 };
+
+// Get a single blog by ID
+exports.getBlogById = async (id) => {
+  const blog = await Blog.findByPk(id);
+  return blog ? blog.toJSON() : null;
+};
+
+// Increase scan number for a blog
+exports.increaseScanNumber = async (id) => {
+  const blog = await Blog.findByPk(id);
+  if (blog) {
+    blog.scanNumber += 1;
+    await blog.save();
+    return true;
+  }
+  return false;
+};
+
+// Update a blog
+exports.updateBlog = async (id, blogData) => {
+  const blog = await Blog.findByPk(id);
+  if (blog) {
+    await blog.update(blogData);
+    return blog.toJSON();
+  }
+  return null;
+};
+
+// Delete a blog
+exports.deleteBlog = async (id) => {
+  const blog = await Blog.findByPk(id);
+  if (blog) {
+    await blog.destroy();
+    return true;
+  }
+  return false;
+};

@@ -25,7 +25,7 @@ router.post("/", async (req, res, next) => {
     res.json(formatResponse(result, ""));
   } catch (error) {
     // Pass error to error handling middleware
-    next(error);
+    res.status(500).json(formatResponse(null, error.message, 1));
   }
 });
 
@@ -49,7 +49,43 @@ router.get("/", async (req, res, next) => {
     res.json(formatResponse(result));
   } catch (error) {
     // Pass error to error handling middleware
-    next(error);
+    res.status(500).json(formatResponse(null, error.message, 1));
+  }
+});
+
+// Get a single blog by id
+router.get("/:id", async (req, res) => {
+  try {
+    // Extract token if available to determine if admin or client
+    const token = req.headers.authorization ? req.headers.authorization.split(" ")[1] : null;
+    const blogId = req.params.id;
+    const result = await blogService.getBlogById(blogId, token);
+    res.send(formatResponse(result, ''));
+  } catch (err) {
+    res.status(500).json(formatResponse(null, err.message, 1));
+  }
+});
+
+// Edit a blog post
+router.put("/:id", async (req, res) => {
+  try {
+    const blogId = req.params.id;
+    const blogData = req.body;
+    const result = await blogService.editBlog(blogId, blogData);
+    res.send(formatResponse(result, ''));
+  } catch (err) {
+    res.status(500).json(formatResponse(null, err.message, 1));
+  }
+});
+
+// Delete a blog post
+router.delete("/:id", async (req, res) => {
+  try {
+    const blogId = req.params.id;
+    const result = await blogService.deleteBlog(blogId);
+    res.send(formatResponse(result, ''));
+  } catch (err) {
+    res.status(500).json(formatResponse(null, err.message, 1));
   }
 });
 
