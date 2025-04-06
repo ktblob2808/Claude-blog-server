@@ -10,8 +10,8 @@ const { formatResponse } = require("../utils/tool");
  */
 router.get("/", async (req, res, next) => {
   try {
-    const result = await aboutService.getAbout();
-    res.json(formatResponse(result));
+    const { url } = await aboutService.getAbout();
+    res.json(formatResponse(url));
   } catch (error) {
     res.status(500).json(formatResponse(null, error.message, 1));
   }
@@ -25,8 +25,8 @@ router.get("/", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
   try {
     const updateData = req.body;
-    const result = await aboutService.updateAbout(updateData);
-    res.json(formatResponse(result, ""));
+    const { url } = await aboutService.updateAbout(updateData);
+    res.json(formatResponse(url, ""));
   } catch (error) {
     res.status(500).json(formatResponse(null, error.message, 1));
   }

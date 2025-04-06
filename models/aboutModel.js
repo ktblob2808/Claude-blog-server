@@ -22,7 +22,7 @@ const About = sequelize.define(
 );
 
 // Seed function to initialize about data
-exports.seedAboutData = async function() {
+const seedAboutData = async function() {
   const count = await About.count();
   if (count === 0) {
     // Initialize with default data if no records exist
@@ -33,4 +33,7 @@ exports.seedAboutData = async function() {
   }
 };
 
-module.exports = About;
+module.exports = {
+    About,
+    seedAboutData
+  };

@@ -1,4 +1,4 @@
-const About = require("../models/aboutModel");
+const { About } = require("../models/aboutModel");
 
 // Get the about information (there should be only one record)
 exports.getAbout = async function () {
