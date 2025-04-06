@@ -4,6 +4,7 @@ const { ServiceError } = require("../errors/index");
 const jwt = require('jsonwebtoken');
 const md5 = require('md5');
 const blogTypeDao = require('../dao/blogTypeDao');
+const { handleToc } = require('../utils/tool');
 
 /**
  * Blog Service
@@ -39,9 +40,8 @@ exports.addBlog = async function (newBlog) {
   newBlog.scanNumber = 0;
   newBlog.commentNumber = 0;
   
-  
-  // If toc is not provided, set it to empty string
-  newBlog.toc = JSON.stringify('[]');
+  // Process markdown content to generate TOC and update HTML content with header IDs
+  handleToc(newBlog);
   
   // Validate that categoryId exists in blogType if provided
   if (newBlog.categoryId) {
@@ -160,12 +160,13 @@ exports.getBlogById = async (id, token) => {
  */
 exports.editBlog = async (id, blogData) => {
   // Check if blog exists
-
-  blogData.toc = JSON.stringify('[]');
   const blog = await blogDao.getBlogById(id);
   if (!blog) {
     throw new Error('Blog not found');
   }
+  
+  // Process markdown content to generate TOC and update HTML content with header IDs
+  handleToc(blogData);
   
   // Update the blog
   const updatedBlog = await blogDao.updateBlog(id, blogData);
