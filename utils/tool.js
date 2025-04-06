@@ -56,22 +56,40 @@ exports.handleToc = (reqBody) => {
     return reqBody;
   }
 
-  // Extract headings from markdown content
-  const headingRegex = /^(#{1,6})\s+(.+)$/gm;
+  // Split content into lines for processing
+  const lines = reqBody.markdownContent.split('\n');
   const headings = [];
-  let match;
+  let inCodeBlock = false;
 
-  while ((match = headingRegex.exec(reqBody.markdownContent)) !== null) {
-    const level = match[1].length; // Number of # characters determines level
-    const name = match[2].trim();
-    const anchor = name.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
+  // Process each line, tracking if we're inside a code block
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
     
-    headings.push({
-      name,
-      anchor,
-      level,
-      children: []
-    });
+    // Check if line starts or ends a code block
+    if (line.trim().startsWith('```')) {
+      inCodeBlock = !inCodeBlock;
+      continue;
+    }
+    
+    // Skip processing if inside a code block
+    if (inCodeBlock) {
+      continue;
+    }
+    
+    // Extract heading if the line is a heading
+    const headingMatch = line.match(/^(#{1,6})\s+(.+)$/);
+    if (headingMatch) {
+      const level = headingMatch[1].length; // Number of # characters determines level
+      const name = headingMatch[2].trim();
+      const anchor = name.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
+      
+      headings.push({
+        name,
+        anchor,
+        level,
+        children: []
+      });
+    }
   }
 
   // Build hierarchical TOC structure
@@ -100,7 +118,7 @@ exports.handleToc = (reqBody) => {
   if (reqBody.htmlContent) {
     headings.forEach(heading => {
       const headingTag = `h${heading.level}`;
-      const headingRegex = new RegExp(`<${headingTag}>(${heading.name})</${headingTag}>`, 'g');
+      const headingRegex = new RegExp(`<${headingTag}>(${heading.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})</${headingTag}>`, 'g');
       reqBody.htmlContent = reqBody.htmlContent.replace(
         headingRegex, 
         `<${headingTag} id="${heading.anchor}">${heading.name}</${headingTag}>`
