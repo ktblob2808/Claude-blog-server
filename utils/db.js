@@ -4,6 +4,7 @@ const BlogType = require('../models/blogTypeModel');
 const { Banner } = require('../models/bannerModel');
 const md5 = require('md5');
 const Demo = require("../models/demoModel");
+const { Setting } = require('../models/settingModel');
 
 // Import other models here
 // const OtherModel = require('../models/otherModel');
