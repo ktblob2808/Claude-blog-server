@@ -66,17 +66,17 @@ const seedSettingData = async () => {
   const count = await Setting.count();
   if (count === 0) {
     await Setting.create({
-      avatar: "/images/avatar.jpg",
+      avatar: "/static/images/avatar.jpg",
       siteTitle: "My Personal Blog",
       github: "https://github.com",
       qq: "123456789",
-      qqQrCode: "/images/qq.png",
+      qqQrCode: "/static/images/qrcode.jpg",
       weixin: "myweixin",
-      weixinQrCode: "/images/weixin.png",
+      weixinQrCode: "/static/images/qrcode.jpg",
       mail: "admin@example.com",
       icp: "ICP备123456号",
       githubName: "developer",
-      favicon: "/images/favicon.ico"
+      favicon: "/static/images/favicon.ico"
     });
     console.log('Initial setting data has been seeded');
   }
