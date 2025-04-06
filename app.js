@@ -25,6 +25,7 @@ const bannerRoutes = require('./routes/banner'); // Import the new banner routes
 const uploadRouter = require('./routes/upload');
 const blogTypeRouter = require('./routes/blogType');
 const blogRouter = require('./routes/blog'); // Add this line to import blog routes
+const demoRouter = require('./routes/demo'); // Add this line to import demo routes
 
 // Import banner seed function
 const { seedBannerData } = require('./models/bannerModel');
@@ -59,11 +60,11 @@ app.use(expressJWT({
     {"url" : "/api/banner", methods : ["GET"]},
     {"url" : "/api/blogtype", methods : ["GET"]},
     {"url" : "/api/blog", methods : ["GET"]},
-    {"url" : /\/api\/blog\/\d/, methods : ["GET"]}// Exclude from token checking
-
+    {"url" : /\/api\/blog\/\d/, methods : ["GET"]}, // Exclude from token checking
+    {"url" : "/api/project", methods : ["GET"]}, // Add demo project routes to public access
+    {"url" : /\/api\/project\/\d/, methods : ["GET"]} // Add demo project detail route to public access
   ]
 }))
-
 
 app.use('/api/admin', adminRoutes);
 app.use('/res', captchaRouter);
@@ -71,7 +72,7 @@ app.use('/api/banner', bannerRoutes); // Add the banner routes
 app.use('/api', uploadRouter);
 app.use('/api/blogtype', blogTypeRouter);
 app.use('/api/blog', blogRouter); // Add this line to register blog routes
-
+app.use('/api/project', demoRouter); // Add this line to register demo routes under /api/project
 
 // Sync database when application starts
 syncDatabase().then(() => {
