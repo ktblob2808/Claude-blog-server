@@ -21,7 +21,7 @@ exports.addMessage = async function (messageInfo) {
   messageInfo.blogId = null;
   
   // Set createDate to current time
-  messageInfo.createDate = Date.now().toString();
+  messageInfo.createDate = Date.now();
   
   // Set random avatar
   messageInfo.avatar = getRandomAvatar();
@@ -42,7 +42,7 @@ exports.addComment = async function (commentInfo) {
   }
   
   // Set createDate to current time
-  commentInfo.createDate = Date.now().toString();
+  commentInfo.createDate = Date.now()
   
   // Set random avatar
   commentInfo.avatar = getRandomAvatar();

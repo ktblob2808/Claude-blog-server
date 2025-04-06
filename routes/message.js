@@ -72,7 +72,7 @@ router.delete("/message/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
     const result = await messageService.deleteMessage(id);
-    res.json(formatResponse(result, ""));
+    res.json(formatResponse(true, ""));
   } catch (error) {
     res.status(500).json(formatResponse(null, error.message, 1));
   }
@@ -87,7 +87,7 @@ router.delete("/comment/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
     const result = await messageService.deleteMessage(id);
-    res.json(formatResponse(result, ""));
+    res.json(formatResponse(true, ""));
   } catch (error) {
     res.status(500).json(formatResponse(null, error.message, 1));
   }

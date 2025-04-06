@@ -36,6 +36,8 @@ exports.getMessages = async function (blogId, page = 1, limit = 10) {
   
   const { count, rows } = await Message.findAndCountAll({
     where: whereCondition,
+    include: 
+    blogId === 'all' || blogId ? [{ model: Blog, as: 'blog'}] : [],
     order: [["createDate", "DESC"]],
     offset,
     limit: parseInt(limit)
