@@ -5,6 +5,7 @@ const { Banner } = require('../models/bannerModel');
 const md5 = require('md5');
 const Demo = require("../models/demoModel");
 const { Setting } = require('../models/settingModel');
+const { seedAboutData } = require('../models/aboutModel');
 
 // Import other models here
 // const OtherModel = require('../models/otherModel');
@@ -41,6 +42,9 @@ async function syncDatabase() {
 
     // Add seed for demo data
     await seedDemoData().catch(err => console.error('Error seeding demo data:', err));
+
+    // Add this line to call the About seed function
+    await seedAboutData();
 
   } catch (error) {
     console.error('Database synchronization failed:', error);
