@@ -27,9 +27,12 @@ const blogTypeRouter = require('./routes/blogType');
 const blogRouter = require('./routes/blog'); // Add this line to import blog routes
 const demoRouter = require('./routes/demo'); // Add this line to import demo routes
 const messageRouter = require('./routes/message'); // Add this line to import message routes
+const settingRouter = require('./routes/setting'); // Import the new setting routes
 
 // Import banner seed function
 const { seedBannerData } = require('./models/bannerModel');
+// Import setting seed function
+const { seedSettingData } = require('./models/settingModel');
 
 var app = express();
 
@@ -65,7 +68,8 @@ app.use(expressJWT({
     {"url" : "/api/project", methods : ["GET"]}, // Add demo project routes to public access
     {"url" : /\/api\/project\/\d/, methods : ["GET"]}, // Add demo project detail route to public access
     {"url" : "/api/message", methods : ["GET", "POST"]}, // Allow public access to messages
-    {"url" : "/api/comment", methods : ["GET", "POST"]} // Allow public access to comments
+    {"url" : "/api/comment", methods : ["GET", "POST"]}, // Allow public access to comments
+    {"url" : "/api/setting", methods : ["GET"]} // Allow public access to settings
   ]
 }))
 
@@ -77,12 +81,15 @@ app.use('/api/blogtype', blogTypeRouter);
 app.use('/api/blog', blogRouter); // Add this line to register blog routes
 app.use('/api/project', demoRouter); // Add this line to register demo routes under /api/project
 app.use('/api', messageRouter); // Add this line to register message routes
+app.use('/api/setting', settingRouter); // Add the setting routes
 
 // Sync database when application starts
 syncDatabase().then(() => {
   console.log('Database setup complete');
   // Seed banner data after database is synced
   seedBannerData().catch(err => console.error('Error seeding banner data:', err));
+  // Seed setting data after database is synced
+  seedSettingData().catch(err => console.error('Error seeding setting data:', err));
 });
 
 // catch 404 and forward to error handler
