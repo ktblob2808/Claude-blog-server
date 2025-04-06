@@ -39,7 +39,7 @@ exports.deleteDemo = async function (id) {
   const demo = await Demo.findByPk(id);
   if (demo) {
     await demo.destroy();
-    return { success: true };
+    return true;
   }
   return null;
 };
