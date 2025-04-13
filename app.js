@@ -61,14 +61,12 @@ app.use(expressJWT({
 }).unless({
   path : [
     {"url" : "/api/admin/login", methods : ["POST"]},
-    {"url" : "/api/admin", methods : ["PUT"]},
     {"url" : "/res/captcha", methods : ["GET"]},
     {"url" : "/api/banner", methods : ["GET"]},
     {"url" : "/api/blogtype", methods : ["GET"]},
     {"url" : "/api/blog", methods : ["GET"]},
     {"url" : /\/api\/blog\/\d/, methods : ["GET"]}, // Exclude from token checking
     {"url" : "/api/project", methods : ["GET"]}, // Add demo project routes to public access
-    {"url" : /\/api\/project\/\d/, methods : ["GET"]}, // Add demo project detail route to public access
     {"url" : "/api/message", methods : ["GET", "POST"]}, // Allow public access to messages
     {"url" : "/api/comment", methods : ["GET", "POST"]}, // Allow public access to comments
     {"url" : "/api/setting", methods : ["GET"]}, // Allow public access to settings

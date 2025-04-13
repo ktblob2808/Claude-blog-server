@@ -15,7 +15,7 @@ const captchaService = require('../services/captchaService');
 router.post('/login', async (req, res) => {
   try {
     const { loginId, loginPwd, remember, captcha } = req.body;
-
+    // First, there should be a captcha verification
     //captchaService.validateCaptcha(captcha, req.session.captcha);
 
     const result = await adminService.login(loginId, loginPwd, remember);
